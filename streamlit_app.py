@@ -59,22 +59,33 @@ except URLError as e:
   streamlit.error()
 
 # dont run anything past here while we troubleshot
-streamlit.stop()
+# streamlit.stop()
+# Allow the end user to add a fruit to the list
+def insert_row_snowflake(new_fruit):
+  with my_cnx.cursor() as my_cur:
+    my_cur.execute("insert into FRUIT_LOAD_LIST values('" + new_fruit +"')")
+    return "Thanks for adding " + new_fruit
 
-# import snowflake.connector
-my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
-my_cur = my_cnx.cursor()
-my_cur.execute("SELECT * from fruit_load_list")
-my_data_row = my_cur.fetchall()
-streamlit.header("The fruit load list contains:")
-streamlit.dataframe(my_data_row)
+add_my_fruit = streamlit.text_input('What fruit would you like to add?')
+if streamlit.button('Get Fruit List'):
+  my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+  back_from_func = insert_row_snowflake(add_my_fruit)
+  my_cnx.close()
+  streamlit.text(back_from_func)
+
+
+# my_cur = my_cnx.cursor()
+# my_cur.execute("SELECT * from fruit_load_list")
+# my_data_row = my_cur.fetchall()
+# streamlit.header("The fruit load list contains:")
+# streamlit.dataframe(my_data_row)
 
 # Adding 2nd Text entry box
-add_my_fruit = streamlit.text_input('What fruit would you like to add?', 'Jackfruit')
+
 streamlit.write('Thanks for adding ', add_my_fruit)
 
 # This will not work properly, but just go with it now
-my_cur.execute("insert into FRUIT_LOAD_LIST values('from streamlit')")
+# my_cur.execute("insert into FRUIT_LOAD_LIST values('from streamlit')")
 
 
 
