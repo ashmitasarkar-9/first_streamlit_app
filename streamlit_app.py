@@ -30,25 +30,28 @@ streamlit.header("Fruityvice Fruit Advice!")
 
 # Let's Call the Fruityvice API from Our Streamlit App!
 # import requests
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/kiwi")
+# fruityvice_response = requests.get("https://fruityvice.com/api/fruit/kiwi")
 #  just writes the data on the screen
 # streamlit.text(fruityvice_response.json()) 
 
 # take the json version of the response and normalize it
-fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
+# fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
 # output it the screen as table
-streamlit.dataframe(fruityvice_normalized)
+# streamlit.dataframe(fruityvice_normalized)
 
 # Add a Text Entry Box and Send the Input to Fruityvice as Part of the API Call
 # New Section to display user fruityvice api response
-streamlit.header("Fruityvice Fruit Advice! as per user choice")
-
-fruit_choice = streamlit.text_input('What fruit would you like information about?','Kiwi')
-streamlit.write('The user entered ', fruit_choice)
-fruityvice_response_user = requests.get("https://fruityvice.com/api/fruit/"+fruit_choice)
-fruityvice_normalized_user = pd.json_normalize(fruityvice_response_user.json())
-
-streamlit.dataframe(fruityvice_normalized_user)
+# streamlit.header("Fruityvice Fruit Advice! as per user choice")
+try:
+  fruit_choice = streamlit.text_input('What fruit would you like information about?')
+  if not fruit_choice:
+    streamlit.error("Please select a fruit to get info.")
+  else:
+    fruityvice_response_user = requests.get("https://fruityvice.com/api/fruit/"+fruit_choice)
+    fruityvice_normalized_user = pd.json_normalize(fruityvice_response_user.json())
+    streamlit.dataframe(fruityvice_normalized_user)
+except URLError as e:
+  streamlit.error()
 
 # dont run anything past here while we troubleshot
 streamlit.stop()
